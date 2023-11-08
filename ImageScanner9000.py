@@ -1,3 +1,6 @@
+import tkinter as tk
+from tkinter import filedialog
+
 from tkinter import *
 from PIL import ImageTk, Image
 from os import listdir, path
@@ -8,7 +11,7 @@ from Tools import ImageToTextWithTesseract as ImTeTs
     global PictureHolder
 '''
 
-DEV = True
+DEV = False
 APP_LENGTH = 6
 APP_HEIGHT = 13
 TASKS_BAR = 0
@@ -37,7 +40,7 @@ for i in range(APP_HEIGHT):
         cell.grid(row=i, column=j, padx=1,pady=1)
 
 #Header
-Label(main_window, text="WeLcome To text Reader 9000",background="Black",foreground="White").grid(row=0,column=0,columnspan=APP_LENGTH)
+Label(main_window, text="Welcome To text Reader 9000",background="Black",foreground="White").grid(row=0,column=0,columnspan=APP_LENGTH)
 
 #work Image Container
 CanvasContainer = Canvas(main_window, width=400, height=400, background="gray")
@@ -49,8 +52,8 @@ Image_Container = CanvasContainer.create_image(200,200,image=Work_Image)
 
 #image field
 Label(main_window, text="Image location:").grid(row=IMAGE_ROW+8,column=WORK_COLUMN)
-ImageLoaction = Entry(main_window,borderwidth=2)
-ImageLoaction.grid(row=IMAGE_ROW+8,column=WORK_COLUMN+1,columnspan=2)
+ImageLocation = Entry(main_window,borderwidth=2)
+ImageLocation.grid(row=IMAGE_ROW+8,column=WORK_COLUMN+1,columnspan=2)
 
 #image output field
 Image_Location_warining = Label(main_window, text="", background=BK_G_DEF, foreground="red")
@@ -60,9 +63,8 @@ ImageOut.grid(row=IMAGE_OUT_ROW+1, column=WORK_COLUMN, columnspan=4,rowspan=3)
 #functions
 def ChangeImage():
     global PictureHolder
-    
     #Checking Input
-    PreviewImageLocation=str(ImageLoaction.get())
+    PreviewImageLocation=str(ImageLocation.get())
     if( not path.isfile(PreviewImageLocation)):
         print(f"This is a not path to a file{str(PreviewImageLocation)}")
         PreviewImageLocation = ""
@@ -70,10 +72,10 @@ def ChangeImage():
         Image_Location_warining.config(text=f"")
     
     if(PreviewImageLocation == ""):
-        Image_Location_warining.config(text=f"path to '{ImageLoaction.get()}' not found")
+        Image_Location_warining.config(text=f"path to '{ImageLocation.get()}' not found")
         PreviewImageLocation = "./Train_data/text/sampletext.png"
-    ImageLoaction.delete(0,END)
-    ImageLoaction.insert(0,PreviewImageLocation)
+    ImageLocation.delete(0,END)
+    ImageLocation.insert(0,PreviewImageLocation)
     
         #ImageOut.delete(1.0,"end")
         #ImageOut.insert("end", f"Image Location Was not Found Using Default\n{PreviewImageLocation}")
@@ -94,16 +96,23 @@ def ChangeImage():
 
 def WordScanner():
     #checks
-    PreviewImageLocation=str(ImageLoaction.get())
+    PreviewImageLocation=str(ImageLocation.get())
     if( not path.isfile(PreviewImageLocation)):
         print(f"This is a not path to a file{str(PreviewImageLocation)}")
         return
 
-    TextFound = ImTeTs.getImageText(ImageLoaction.get())
+    TextFound = ImTeTs.getImageText(ImageLocation.get())
     ImageOut.delete(1.0,"end")
     ImageOut.insert("end", f"{TextFound}")
+    
+#----------------
+def browseFiles():
+    filePath = filedialog.askopenfilename(initialdir = "/", title = "Select a File", filetypes = (("PNG files", "*.png*"), ("all files", "*.*")))
+    ImageLocation.insert(tk.END, filePath)
 
-
+#def Text2Speech():
+    
+#----------------
 
 def SaveIMG():
     ImTeTs.saveImageText(textGenerated=ImageOut.get("1.0",END))
@@ -115,11 +124,13 @@ Button(main_window, text="Update Image",command=ChangeImage).grid(row=IMAGE_ROW+
 
 Label(main_window, text="Try our Image Analysis options").grid(row=TASK_ROW,column=TASKS_BAR)
 Button(main_window, text="Word Scanner",command=WordScanner).grid(row=TASK_ROW+1,column=TASKS_BAR)
-Button(main_window, text="Text 2 speach",command=ImageLoaction).grid(row=TASK_ROW+2,column=TASKS_BAR)
-Button(main_window, text="Place Holder",command=ImageLoaction).grid(row=TASK_ROW+3,column=TASKS_BAR)
-Button(main_window, text="Place Holder",command=ImageLoaction).grid(row=TASK_ROW+4,column=TASKS_BAR)
+Button(main_window, text="Text 2 speech",command=ImageLocation).grid(row=TASK_ROW+2,column=TASKS_BAR)
+Button(main_window, text="Place Holder",command=ImageLocation).grid(row=TASK_ROW+3,column=TASKS_BAR)
+Button(main_window, text="Place Holder",command=ImageLocation).grid(row=TASK_ROW+4,column=TASKS_BAR)
 
-Button(main_window, text="Save Text",command=SaveIMG).grid(row=TASK_ROW+9,column=TASKS_BAR)
+Button(main_window, text="Save Text",command=SaveIMG).grid(row=IMAGE_ROW+9,column=WORK_COLUMN)
+Button(main_window, text="Browse Files",command=browseFiles).grid(row=IMAGE_ROW+9,column=WORK_COLUMN+3)
+
 
 
 main_window.mainloop()
