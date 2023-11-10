@@ -1,6 +1,7 @@
 from tkinter import *
 import tkinter as tk
 from tkinter import filedialog
+import pyttsx3
 
 from PIL import ImageTk, Image
 from os import listdir, path
@@ -110,12 +111,24 @@ def WordScanner():
 
     
 def browseFiles():
+    #New addition to clear
+    ImageLocation.delete(0,END)
+    #-----------------------
     filePath = filedialog.askopenfilename(initialdir = "/", title = "Select a File", filetypes = (("PNG files", "*.png*"), ("all files", "*.*")))
     ImageLocation.insert(tk.END, filePath)
 
 def Text2Speech():
-    pass
-
+    #New addition for T2S. Also import pyttsx3 at top
+    TextFound = ImageOut.get(1.0,"end-1c")
+    if (len(TextFound) == 0):
+        print(f"There is no text to read, please write in the text box or scan text from an image")
+        return
+    else:
+        engine = pyttsx3.init()
+        engine.say(TextFound)
+        engine.runAndWait()
+    #-----------------------
+    
 def SaveIMG():
     #save to History
     ImTeTs.saveImageText(pathUsed=ImageLocation.get(), textGenerated=ImageOut.get("1.0",END))
@@ -130,7 +143,7 @@ Button(main_window, text="Update Image",command=ChangeImage,background=BUTTN_COL
 # Actions
 Label(main_window, text="Try our Image Analysis options", background=LABEL_COLLOR).grid(row=TASK_ROW,column=TASKS_BAR)
 Button(main_window, text="Word Scanner",command=WordScanner,background=BUTTN_COLLOR).grid(row=TASK_ROW+1,column=TASKS_BAR)
-Button(main_window, text="Text 2 speach",command=PlaceHolder,background=BUTTN_COLLOR).grid(row=TASK_ROW+2,column=TASKS_BAR)
+Button(main_window, text="Text 2 speach",command=Text2Speech,background=BUTTN_COLLOR).grid(row=TASK_ROW+2,column=TASKS_BAR)
 Button(main_window, text="Place Holder",command=PlaceHolder,background=BUTTN_COLLOR).grid(row=TASK_ROW+3,column=TASKS_BAR)
 Button(main_window, text="Place Holder",command=PlaceHolder,background=BUTTN_COLLOR).grid(row=TASK_ROW+4,column=TASKS_BAR)
 
