@@ -1,11 +1,14 @@
 from tkinter import *
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import ttk
 import pyttsx3
 
 from PIL import ImageTk, Image
 from os import listdir, path
 from Tools import ImageToTextWithTesseract as ImTeTs
+from Tools import translateText as trText
+from translate import Translator
 
 #becarefull of the Globals:
 #download TKInter
@@ -135,8 +138,37 @@ def SaveIMG():
     #save to independent file
     ImTeTs.saveImageTextSingle(pathUsed=ImageLocation.get(), textGenerated=ImageOut.get("1.0", END))
 
+def Translate():
+    TextFound = ImageOut.get(1.0,"end-1c")
+    # get languages from language list
+    languages = trText.languages
+    lang_list = [lang[0] for lang in languages]
+
+    # create a smaller window to display translation functions
+    translate_window = Toplevel(main_window)
+    translate_window.title("Translate Input")
+    translate_window.geometry("320x250")
+    translate_window.configure(background=BK_G_DEF)
+
+    # Entry box for language choice
+    Label(translate_window, text="Enter Language (press enter)", background=LABEL_COLLOR).grid(row=0, column=0, padx=10, pady=10)
+    language_input = Entry(translate_window, borderwidth=2)
+    language_input.grid(row=0, column=1, padx=10, pady=10)
+
+    # bind the entry box to trigger the translation function in translateText.py
+    language_input.bind("<Return>", lambda event: trText.perform_translation(language_input.get(), TextFound, ImageOut, event))
+
+    # scrollable list of language options
+    Label(translate_window, text="Language Options", background=BK_G_DEF).grid(row=1, column=0, columnspan=2, padx=0, pady=0)
+    lang_list = Listbox(translate_window)
+    lang_list.grid(row=2, column=0, columnspan=2, padx=0, pady=0)
+    for name, code in languages:
+        lang_list.insert(END, f"{name}")
+
+    
 def PlaceHolder():
     pass
+
 #buttons
 Button(main_window, text="Update Image",command=ChangeImage,background=BUTTN_COLLOR).grid(row=IMAGE_ROW+8,column=WORK_COLUMN+3)
 
@@ -144,7 +176,7 @@ Button(main_window, text="Update Image",command=ChangeImage,background=BUTTN_COL
 Label(main_window, text="Try our Image Analysis options", background=LABEL_COLLOR).grid(row=TASK_ROW,column=TASKS_BAR)
 Button(main_window, text="Word Scanner",command=WordScanner,background=BUTTN_COLLOR).grid(row=TASK_ROW+1,column=TASKS_BAR)
 Button(main_window, text="Text 2 speach",command=Text2Speech,background=BUTTN_COLLOR).grid(row=TASK_ROW+2,column=TASKS_BAR)
-Button(main_window, text="Place Holder",command=PlaceHolder,background=BUTTN_COLLOR).grid(row=TASK_ROW+3,column=TASKS_BAR)
+Button(main_window, text="Translate",command=Translate,background=BUTTN_COLLOR).grid(row=TASK_ROW+3,column=TASKS_BAR)
 Button(main_window, text="Place Holder",command=PlaceHolder,background=BUTTN_COLLOR).grid(row=TASK_ROW+4,column=TASKS_BAR)
 
 Button(main_window, text="Save Text",command=SaveIMG,background=BUTTN_COLLOR).grid(row=IMAGE_ROW+9,column=WORK_COLUMN)
