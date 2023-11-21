@@ -8,3 +8,6 @@ Installations:
 - pyttsx (text to speech):
   - https://pypi.org/project/pyttsx3/
         Command: pip install pyttsx3
+- translate
+  - https://pypi.org/project/translate/
+        command: pip install translate
