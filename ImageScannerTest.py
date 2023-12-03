@@ -14,9 +14,6 @@ from translate import Translator
 
 #be careful of the Globals:
 #download TKInter
-'''
-    global PictureHolder
-'''
 
 # Fix warning message box
 # !Count letters and Words
@@ -162,7 +159,7 @@ for i in range(30): #30 Cells in Width
         if (DEV):
             cell = Frame(main_window, width = 200, height = 35, background= "Blue")
         else:
-            cell = Frame(main_window, width = 200, height = 35, background = 'black') # BK_G_DEF
+            cell = Frame(main_window, width = 200, height = 35, background = BK_G_DEF) # BK_G_DEF
 
         cell.grid(row = i, column = j, padx = 1, pady = 1)
 
