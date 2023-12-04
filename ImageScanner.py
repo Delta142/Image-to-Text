@@ -275,6 +275,11 @@ def Revert():
 #Performs languages conversion
 def perform_translation():
         user_lang_input = LanguageOut.get() #Gets entered language choice
+
+        if not user_lang_input.strip():
+            print("Please select a language first.")
+            return
+
         text_to_translate = ImageOut.get(1.0,"end-1c") #Gets text from read/entered text
         #print(user_lang_input)
         #print(text_to_translate)
