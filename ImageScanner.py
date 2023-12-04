@@ -14,16 +14,9 @@ from translate import Translator
 
 #be careful of the Globals:
 #download TKInter
-
-# Fix warning message box
-# !Count letters and Words
-# Do More With History
-# !Detect Link/Email
-# !Copy to Clipboard
-# Share to Social Media
-# Text to Image
-# !Select Language
-# !Select Output Format (Download)
+'''
+    global PictureHolder
+'''
 
 # ...
 DEV = False
@@ -34,7 +27,9 @@ IMAGE_ROW = 1
 BK_G_DEF = '#36454F' #Originally "lightblue"
 BUTTN_COLOR = "cadetblue"
 LABEL_COLOR = "cyan" #Originally "darkblue"
+SavedText = ""
 languages = [
+    ("English", "en"),
     ("Afrikaans", "af"),
     ("Albanian", "sq"),
     ("Amharic", "am"),
@@ -55,7 +50,6 @@ languages = [
     ("Czech", "cs"),
     ("Danish", "da"),
     ("Dutch", "nl"),
-    ("English", "en"),
     ("Esperanto", "eo"),
     ("Estonian", "et"),
     ("Finnish", "fi"),
@@ -195,7 +189,7 @@ def ChangeImage():
         print(f"This is a not path to a file{str(PreviewImageLocation)}") #Then display error message
         PreviewImageLocation = "" #Makes text field blank again since previous emtry was invalid
     else:
-        return
+        pass
 
     '''
     else: #If it is a valid file path
@@ -224,6 +218,7 @@ def ChangeImage():
 
 #Converts image to text and outputs result
 def WordScanner():
+    global SavedText
     PreviewImageLocation = str(ImageLocation.get()) #Gets the value from user entered file path box
 
     if( not path.isfile(PreviewImageLocation)): #If not a valid file path 
@@ -231,6 +226,7 @@ def WordScanner():
         return #Terminates function
 
     TextFound = ImTeTs.getImageText(ImageLocation.get()) #Convert image to text and save it
+    SavedText = TextFound
     ImageOut.delete(1.0,"end") #Clear text widget from beginning to end
     ImageOut.insert("end", f"{TextFound}") #Insert into text widget at the end (blank so front really)
 
@@ -271,9 +267,11 @@ def count_letters_and_words():
     CharOut.config(text=f"Character Count: {letter_count}") #Update label
 
 #Place holder
-def PlaceHolder():
-    pass
-
+def Revert():
+    global SavedText
+    ImageOut.delete(1.0,"end")
+    ImageOut.insert("end", f"{SavedText}")
+    
 #Performs languages conversion
 def perform_translation():
         user_lang_input = LanguageOut.get() #Gets entered language choice
@@ -322,7 +320,7 @@ Button(main_window, text="Text to Speech", command=Text2Speech, background=BUTTN
 LanguageOut = Entry(main_window, width=24, borderwidth=2) #Select Language Input Box
 LanguageOut.grid(row=IMAGE_ROW+16, column=4, columnspan=2) #Places input box on grid
 Button(main_window, text="Update Language", command=perform_translation, background=BUTTN_COLOR, width=20).grid(row=18,column=4, columnspan=2)
-Button(main_window, text="Revert Language", command=PlaceHolder, background=BUTTN_COLOR, width=20).grid(row=19,column=4, columnspan=2)
+Button(main_window, text="Revert Language", command=Revert, background=BUTTN_COLOR, width=20).grid(row=19,column=4, columnspan=2)
 lang_list = Listbox(main_window, height=6) # creates list box within new window
 lang_list.grid(row=17, column=5, columnspan=2, rowspan=3, padx=0, pady=0) # places listbox on grid
 # places every language within list box
