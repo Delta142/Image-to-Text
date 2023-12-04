@@ -14,16 +14,9 @@ from translate import Translator
 
 #be careful of the Globals:
 #download TKInter
-
-# Fix warning message box
-# !Count letters and Words
-# Do More With History
-# !Detect Link/Email
-# !Copy to Clipboard
-# Share to Social Media
-# Text to Image
-# !Select Language
-# !Select Output Format (Download)
+'''
+    global PictureHolder
+'''
 
 # ...
 DEV = False
@@ -34,6 +27,7 @@ IMAGE_ROW = 1
 BK_G_DEF = '#36454F' #Originally "lightblue"
 BUTTN_COLOR = "cadetblue"
 LABEL_COLOR = "cyan" #Originally "darkblue"
+SavedText = ""
 languages = [
     ("Afrikaans", "af"),
     ("Albanian", "sq"),
@@ -148,7 +142,7 @@ languages = [
 main_window = Tk()
 
 #configure window
-main_window.geometry("700x700") # dimension
+main_window.geometry("1400x900") # dimension # dimension
 main_window.title("Image Reader 9000") # title
 main_window.configure(background = BK_G_DEF) # background color
 
@@ -194,13 +188,8 @@ def ChangeImage():
     if( not path.isfile(PreviewImageLocation)): #If not a valid file path 
         print(f"This is a not path to a file{str(PreviewImageLocation)}") #Then display error message
         PreviewImageLocation = "" #Makes text field blank again since previous emtry was invalid
-
-    else: #If it is a valid file path
-        Image_Location_Warning.config(text=f"") #No warning text
-    
-    if(PreviewImageLocation == ""): #If not valid file path, say path not found and fill textbox with sample text
-        Image_Location_Warning.config(text=f"path to '{ImageLocation.get()}' not found") #Warning pop up
-        PreviewImageLocation = "./Train_data/text/sampletext.png" #Sample text
+    else:
+        pass
 
     ImageLocation.delete(0,END) #Clear text box
     ImageLocation.insert(0,PreviewImageLocation) #Insert sample text
@@ -220,6 +209,7 @@ def ChangeImage():
 
 #Converts image to text and outputs result
 def WordScanner():
+    global SavedText
     PreviewImageLocation = str(ImageLocation.get()) #Gets the value from user entered file path box
 
     if( not path.isfile(PreviewImageLocation)): #If not a valid file path 
@@ -227,6 +217,7 @@ def WordScanner():
         return #Terminates function
 
     TextFound = ImTeTs.getImageText(ImageLocation.get()) #Convert image to text and save it
+    SavedText = TextFound
     ImageOut.delete(1.0,"end") #Clear text widget from beginning to end
     ImageOut.insert("end", f"{TextFound}") #Insert into text widget at the end (blank so front really)
 
@@ -267,12 +258,19 @@ def count_letters_and_words():
     CharOut.config(text=f"Character Count: {letter_count}") #Update label
 
 #Place holder
-def PlaceHolder():
-    pass
-
+def Revert():
+    global SavedText
+    ImageOut.delete(1.0,"end")
+    ImageOut.insert("end", f"{SavedText}")
+    
 #Performs languages conversion
 def perform_translation():
         user_lang_input = LanguageOut.get() #Gets entered language choice
+
+        if not user_lang_input.strip():
+            print("Please select a language first.")
+            return
+
         text_to_translate = ImageOut.get(1.0,"end-1c") #Gets text from read/entered text
         #print(user_lang_input)
         #print(text_to_translate)
@@ -297,6 +295,99 @@ def perform_translation():
         else:
                 print("Language not found")
 
+def display_help():
+    def show_help():
+        help_text = """
+        Image Reader 9000 Help
+        
+        How to Use:
+            
+        - Update Image: Load an image file for processing.
+            Upload an image (preferably one that has written legible text)
+        
+        - Word Scanner: Extract text from the loaded image.
+            Button that will extract text from the user uploaded image
+        
+        - Text 2 Speech: Convert the extracted text to speech.
+            Button that will (if there is text in the output box, will output a sound reading out the text)
+            
+        - Save Text: Save the extracted text to a file.
+        
+        - Browse Files: Select an image file using a file dialog.
+        
+        - Update Langugage: Update the text analyzed into a chosen language
+        
+        - Revert Language: Revert language back to English
+        
+        KEYBINDS:
+            CTRL+1: Change image toggle
+            CTRL+2: browse files toggle
+            CTRL+3: Word Scanner toggle
+            CTRL+4: Save Image toggle
+            CTRL+5: Count letters and words toggle
+            CTRL+6: Text2Speech toggle
+            CTRL+7: Translation toggle
+            CTRL+8: display help toggle
+            CTRL+9: Revert languge toggle
+            
+            
+
+        Credits:
+            Jenna Kim (jki342@uky.edu)
+            Del Cade  (agca253@uky.edu)
+            Cooper Jordan (cdjo249@uky.edu)
+            Luis Contreras (lrco247@uky.edu)
+            Kevin Kelmonas (klke240@uky.edu)
+            
+            
+            ...
+        Thank you for using Image Reader 9000!
+        """
+
+        help_window = Toplevel(main_window)
+        help_window.title("Help")
+        #help_window.geometry("600x500")
+
+        window_width = 550
+        window_height = 600
+
+        # Gets both half the screen width/height and window width/height
+        position_right = int(help_window.winfo_screenwidth()/2 - window_width/2)
+        position_down = int(help_window.winfo_screenheight()/2 - window_height/2)
+
+        # Positions the window in the center of the page.
+        help_window.geometry(f"{window_width}x{window_height}+{position_right}+{position_down}")
+
+        help_label = Label(help_window, text=help_text, justify=LEFT)
+        help_label.pack(padx=20, pady=20)
+
+    return show_help
+
+accessibility_enabled = False
+
+def toggle_accessibility():
+    global accessibility_enabled
+    accessibility_enabled = not accessibility_enabled
+    if accessibility_enabled:
+        main_window.bind_all('<Control-1>', lambda event: ChangeImage())
+        main_window.bind_all('<Control-2>', lambda event: browseFiles())
+        main_window.bind_all('<Control-3>', lambda event: WordScanner())
+        main_window.bind_all('<Control-4>', lambda event: SaveIMG())
+        main_window.bind_all('<Control-5>', lambda event: count_letters_and_words())
+        main_window.bind_all('<Control-6>', lambda event: Text2Speech())
+        main_window.bind_all('<Control-7>', lambda event: perform_translation())
+        main_window.bind_all('<Control-8>', lambda event: display_help()())
+        #   main_window.bind_all('<Control-8>', lambda event: display_help()()) update for final 
+    else:
+        main_window.unbind_all('<Control-1>')
+        main_window.unbind_all('<Control-2>')
+        main_window.unbind_all('<Control-3>')
+        main_window.unbind_all('<Control-4>')
+        main_window.unbind_all('<Control-5>')
+        main_window.unbind_all('<Control-6>')
+        main_window.unbind_all('<Control-7>')
+        main_window.unbind_all('<Control-8>')
+
 #Buttons/Labels/etc...
 Label(main_window, text = "Welcome To Text Reader 9000", background = BK_G_DEF, foreground = "White", font=("Helvetica", 24)).grid(row=1, column=2, columnspan=3, rowspan=1)
 
@@ -318,12 +409,15 @@ Button(main_window, text="Text to Speech", command=Text2Speech, background=BUTTN
 LanguageOut = Entry(main_window, width=24, borderwidth=2) #Select Language Input Box
 LanguageOut.grid(row=IMAGE_ROW+16, column=4, columnspan=2) #Places input box on grid
 Button(main_window, text="Update Language", command=perform_translation, background=BUTTN_COLOR, width=20).grid(row=18,column=4, columnspan=2)
-Button(main_window, text="Revert Language", command=PlaceHolder, background=BUTTN_COLOR, width=20).grid(row=19,column=4, columnspan=2)
+Button(main_window, text="Revert Language", command=Revert, background=BUTTN_COLOR, width=20).grid(row=19,column=4, columnspan=2)
 lang_list = Listbox(main_window, height=6) # creates list box within new window
 lang_list.grid(row=17, column=5, columnspan=2, rowspan=3, padx=0, pady=0) # places listbox on grid
 # places every language within list box
 for name, code in languages: 
     lang_list.insert(END, f"{name}")
+
+Button(main_window, text="Help", command=display_help(), background=BUTTN_COLOR, width=10).grid(row=21,column=3, columnspan=1, rowspan=2, sticky=W)
+Button(main_window, text="Keybinds", command=toggle_accessibility, background=BUTTN_COLOR, width=10).grid(row=21,column=3, columnspan=1, rowspan=2, stick=E)
 
 #Run main window
 main_window.mainloop()
