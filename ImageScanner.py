@@ -142,7 +142,7 @@ languages = [
 main_window = Tk()
 
 #configure window
-main_window.geometry("700x700") # dimension
+main_window.geometry("1400x900") # dimension # dimension
 main_window.title("Image Reader 9000") # title
 main_window.configure(background = BK_G_DEF) # background color
 
