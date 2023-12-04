@@ -29,7 +29,6 @@ BUTTN_COLOR = "cadetblue"
 LABEL_COLOR = "cyan" #Originally "darkblue"
 SavedText = ""
 languages = [
-    ("English", "en"),
     ("Afrikaans", "af"),
     ("Albanian", "sq"),
     ("Amharic", "am"),
@@ -50,6 +49,7 @@ languages = [
     ("Czech", "cs"),
     ("Danish", "da"),
     ("Dutch", "nl"),
+    ("English", "en"),
     ("Esperanto", "eo"),
     ("Estonian", "et"),
     ("Finnish", "fi"),
